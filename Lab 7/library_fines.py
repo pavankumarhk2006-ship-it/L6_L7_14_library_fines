@@ -1,17 +1,32 @@
 def parse_member_id(member_id):
-    member_type, number = member_id.split('-')
-    return member_type.upper(), int(number)
+    """Safely parses member ID with strict validation."""
+    if not isinstance(member_id, str) or '-' not in member_id:
+        return ("UNKNOWN", 0)
+    parts = member_id.split('-')
+    if len(parts) != 2 or not parts[1].strip().isdigit():
+        return (parts[0].upper() if parts[0] else "UNKNOWN", 0)
+    return parts[0].upper(), int(parts[1].strip())
 
 def total_fine(days_csv):
-    days = [int(d) for d in days_csv.split(',')]
+    """Safely calculates total fine from CSV string."""
+    if not isinstance(days_csv, str) or not days_csv.strip():
+        return 0
     fine = 0
-    for d in days:
-        if d > 14:
-            fine += (d - 14) * 2
+    for d in days_csv.split(','):
+        d_clean = d.strip()
+        if d_clean.isdigit():
+            val = int(d_clean)
+            if val > 14:
+                fine += (val - 14) * 2
     return fine
 
 def shelf_code(title):
+    """Safely generates a shelf code from a book title."""
+    if not isinstance(title, str) or not title.strip():
+        return "XX"
     words = title.split()
+    if len(words) < 2:
+        return "XX"
     return (words[0][0] + words[1][0]).upper()
 
 def main():
